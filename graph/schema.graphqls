@@ -1,0 +1,81 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Notification {
+    langCode: String!
+    id: ID!
+    title: String!
+    body: String!
+    userId: Int!
+    read: Boolean!
+}
+
+input NewSimpleNotification{
+    langCode: String!
+    userId: Int!
+    orderId: Int!
+    orderType: String!
+    orderDescription: String!
+    hyperLink: String!
+}
+
+type SimpleNotification{
+    id: Int!
+    orderId: Int!
+    orderType: String!
+    status: Boolean!
+    orderDescription: String!
+    hyperLink: String!
+    createdTime: String!
+    userId: Int!
+    langCode: String!
+}
+
+input NewNotification {
+    id: ID!
+    title: String!
+    body: String!
+    userId: Int!
+
+}
+
+input MarkRead{
+    id: Int!
+}
+
+type Notifications {
+    notifications: [Notification!]
+    nextOffset: Int!
+}
+
+type SimpleNotifications{
+    notifications: [SimpleNotification!]
+    nextOffset: Int!
+}
+
+input RegisterToken {
+    userId: Int!
+    token: String!
+}
+
+input NotificationList{
+    count: Int
+    offset: Int
+    langCode: String
+}
+
+type Query {
+    notifications(count: Int = 10, offset: Int=0): Notifications!
+    simpleNotifications(input: NotificationList): SimpleNotifications!
+}
+
+
+type Mutation {
+    registerToken(input: RegisterToken ) : Boolean!
+    clearNotification:Boolean!
+    createNotification(input: NewNotification!): Notification!
+    createSimpleNotification(input: NewSimpleNotification) : SimpleNotification!
+    markRead(input: MarkRead): SimpleNotification!
+}
+
