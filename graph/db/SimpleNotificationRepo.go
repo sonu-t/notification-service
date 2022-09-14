@@ -41,28 +41,23 @@ func (n *simpleNotificationRepo) MarkRead(ctx context.Context, read *model.MarkR
 
 func (n *simpleNotificationRepo) Notifications(ctx context.Context, offset int, count int, langCode string, userId int) ([]*model.SimpleNotification, int, error) {
 	total := len(n.notifications)
-	if total == 0 {
+	if total == 0 || offset < 0 || offset >= total {
 		return nil, -1, nil
 	}
-	start := offset
-	if start > total {
-		return nil, -1, nil
+	if offset == 0 {
+		offset = len(n.notifications) - 1
 	}
-
 	var notifications []*model.SimpleNotification
-	for _, notification := range n.notifications[start:] {
+	for offset >= 0 {
+		notification := n.notifications[offset]
 		if notification.UserID == userId && notification.LangCode == langCode {
 			notifications = append(notifications, notification)
 		}
-		offset += 1
+		offset -= 1
 		if len(notifications) == count {
 			break
 		}
 	}
-	if offset == len(n.notifications) {
-		offset = -1
-	}
-
 	return notifications, offset, nil
 }
 
