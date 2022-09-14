@@ -59,6 +59,9 @@ func (n *simpleNotificationRepo) Notifications(ctx context.Context, offset int, 
 			break
 		}
 	}
+	if offset == len(n.notifications) {
+		offset = -1
+	}
 
 	return notifications, offset, nil
 }

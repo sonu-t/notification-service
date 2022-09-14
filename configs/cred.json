@@ -1,8 +1,8 @@
 {
   "type": "service_account",
   "project_id": "test-project-115e6",
-  "private_key_id": "733bddac19a42c5295fa2b1cef253b08c2aa5ddb",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCsBYVSY3robGEr\ncNCu07kmeKRQZaswPSxv9IrzYssn+jO6aDH8BDjc5bN1u0TjGpf0DYYfx1bK2F3D\nSTLJ3Mi25g1XENLNvW3jU4qaH7KiwLeifjFR3e8a64GI4OTI0A79hJw+eda+wHz2\ndavVVOJzcIw4dQp0CcM1UYW9LZkuM2Qv9ZFySzTMTYIdkTVqfa5/eg4dWIlSpY3k\nOqTXJ1MiMhlhCAgsyGACpTdNu5IaycRwf9NUZAwXJn9k30tWhktbPeMUVcZW4898\nCpqw091vIUP9V0M1Wh9gsHuTb/uWmXBii/phHcN5wESqwkfhL/i81lorkppwwzNL\n7sVSU/upAgMBAAECggEACu2XqHVANwjzkovqZfQQKUm1JPpgfRvVxkL8NM8/TFaq\nKwE4wH1DYFBWlBGFvc7psL81mLBt0Uy17PsQdx+uJjH7m173ojEsWV25F2aq6Lxi\nrh4wMFA8djK+s7bKmGTg67aDkO1MLCmt7QZRGHT52EJh76nXzfYoAl7sc4LORJxn\nHJreDUvF6SWav3X/2bHmvlg0muXUsAeMiQLjhRHFVQ9hO4IuNA1OfmeT1u/tuJDH\nBRmsQ/8lKRRVkrEaSfWz/5tqmMiL5gzwOC0hbahvuGS1jj19I/CfntiHGak2+09s\nk//IDqvnE6WSzvSwuyTgHN3+b5IO0Xu9ZvTi++c6hQKBgQDtooK8wjUdDfU1Xcsn\naHuCc/b0vtLA4lwcU/oyYQn9S7ScFsUCXfCXdOIRxX7DVsi2X4RlIeqZyTFTmQyw\nNPbkXBla0XlhKHgQVoKBCD8qjXsYVWeB4D7wcvmrGgqV5jupbO7OE3NPvc98TLzT\noRSLuiYCvU7E5H1vtZyvHphPdwKBgQC5UOJLCucgrTHmlq2cyjq22HrjKsvnrud7\nlqhHxDxmJ6j32vFY4GWtS5vgpWKIhAaW+8Z6mejBTZU75GaokY4mibYsSYFQWWxo\nDDOaVFaJF5v9wIRMsykn5wC21ZWdGCucE3zHEOGMd8JkgKIST1TKc5ZAfEpzdAlU\nATf1OG4V3wKBgBTg2Fe5QG1jEo4zxWua9G8LvUDXmzCzMqCSiELw363PfvjPz1Nb\n6Y2FCW/CSFblQxEy5zDzf+cvFBRiOAkrPh3mMZwXF3D/2zykPScVEGeusof6yPNS\nPnVlxKXRzehJqChEl96nOtRguuAS5ew6FNIJ8tj+xPLrmFG+RRvltkAVAoGBAKHC\n9/WXa897P37P8nZVlND8wLBBMEJpy4h3JyeWJT7qybSpOllhb3/I6yU6WHtf+7yZ\nxFRKuwDZbzYblnz4qYP8W7fm5ek0VcuxMu45Rlxe7nyfKx0kmv1IyLfQUswRSCfy\nXs4Jb0jFVTuTiWXAN/yMzxA1Lmv/UxEwCx+UBYwzAoGBAI/SA4+T7hgrQK17kswL\nf2XEpxVoTifVmrkqDEdB0O1faBiYsLU+vu20edGtDrxVfZ0Imb+xJnDLXBAF4/+f\nLEx9FvO67XUaBe1b5d3wDEhmd8C5yfUzhHdwG7vuomG3YhaSxrM0RQIRcVdeIIA7\nDSIjapLpm3DZse+veT758o+7\n-----END PRIVATE KEY-----\n",
+  "private_key_id": "",
+  "private_key": "",
   "client_email": "firebase-adminsdk-m6okv@test-project-115e6.iam.gserviceaccount.com",
   "client_id": "100028320451073179501",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",

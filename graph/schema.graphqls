@@ -73,8 +73,8 @@ type Query {
 
 type Mutation {
     registerToken(input: RegisterToken ) : Boolean!
-    clearNotification:Boolean!
     createNotification(input: NewNotification!): Notification!
+    clearNotification:Boolean!
     createSimpleNotification(input: NewSimpleNotification) : SimpleNotification!
     markRead(input: MarkRead): SimpleNotification!
 }
