@@ -45,7 +45,7 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		ClearNotification        func(childComplexity int) int
+		ClearNotification        func(childComplexity int, input *model.ClearNotificationIn) int
 		CreateNotification       func(childComplexity int, input model.NewNotification) int
 		CreateSimpleNotification func(childComplexity int, input *model.NewSimpleNotification) int
 		MarkRead                 func(childComplexity int, input *model.MarkRead) int
@@ -91,8 +91,8 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	RegisterToken(ctx context.Context, input *model.RegisterToken) (bool, error)
-	ClearNotification(ctx context.Context) (bool, error)
 	CreateNotification(ctx context.Context, input model.NewNotification) (*model.Notification, error)
+	ClearNotification(ctx context.Context, input *model.ClearNotificationIn) (bool, error)
 	CreateSimpleNotification(ctx context.Context, input *model.NewSimpleNotification) (*model.SimpleNotification, error)
 	MarkRead(ctx context.Context, input *model.MarkRead) (*model.SimpleNotification, error)
 }
@@ -121,7 +121,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Mutation.ClearNotification(childComplexity), true
+		args, err := ec.field_Mutation_clearNotification_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ClearNotification(childComplexity, args["input"].(*model.ClearNotificationIn)), true
 
 	case "Mutation.createNotification":
 		if e.complexity.Mutation.CreateNotification == nil {
@@ -336,6 +341,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputClearNotificationIn,
 		ec.unmarshalInputMarkRead,
 		ec.unmarshalInputNewNotification,
 		ec.unmarshalInputNewSimpleNotification,
@@ -466,6 +472,11 @@ input NotificationList{
     count: Int
     offset: Int
     langCode: String
+    userId: Int
+}
+
+input ClearNotificationIn{
+    userId: Int
 }
 
 type Query {
@@ -476,8 +487,8 @@ type Query {
 
 type Mutation {
     registerToken(input: RegisterToken ) : Boolean!
-    clearNotification:Boolean!
     createNotification(input: NewNotification!): Notification!
+    clearNotification(input: ClearNotificationIn):Boolean!
     createSimpleNotification(input: NewSimpleNotification) : SimpleNotification!
     markRead(input: MarkRead): SimpleNotification!
 }
@@ -489,6 +500,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_clearNotification_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.ClearNotificationIn
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOClearNotificationIn2ᚖgithubᚗcomᚋezrxᚋnotificationᚑserviceᚋgraphᚋmodelᚐClearNotificationIn(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_createNotification_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -697,50 +723,6 @@ func (ec *executionContext) fieldContext_Mutation_registerToken(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_clearNotification(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_clearNotification(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ClearNotification(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_clearNotification(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_createNotification(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createNotification(ctx, field)
 	if err != nil {
@@ -804,6 +786,61 @@ func (ec *executionContext) fieldContext_Mutation_createNotification(ctx context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createNotification_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_clearNotification(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_clearNotification(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ClearNotification(rctx, fc.Args["input"].(*model.ClearNotificationIn))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_clearNotification(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_clearNotification_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -3848,6 +3885,34 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputClearNotificationIn(ctx context.Context, obj interface{}) (model.ClearNotificationIn, error) {
+	var it model.ClearNotificationIn
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"userId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "userId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+			it.UserID, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputMarkRead(ctx context.Context, obj interface{}) (model.MarkRead, error) {
 	var it model.MarkRead
 	asMap := map[string]interface{}{}
@@ -4003,7 +4068,7 @@ func (ec *executionContext) unmarshalInputNotificationList(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"count", "offset", "langCode"}
+	fieldsInOrder := [...]string{"count", "offset", "langCode", "userId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -4031,6 +4096,14 @@ func (ec *executionContext) unmarshalInputNotificationList(ctx context.Context, 
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("langCode"))
 			it.LangCode, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "userId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+			it.UserID, err = ec.unmarshalOInt2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4112,19 +4185,19 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "clearNotification":
+		case "createNotification":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_clearNotification(ctx, field)
+				return ec._Mutation_createNotification(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "createNotification":
+		case "clearNotification":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createNotification(ctx, field)
+				return ec._Mutation_clearNotification(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -5174,6 +5247,14 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOClearNotificationIn2ᚖgithubᚗcomᚋezrxᚋnotificationᚑserviceᚋgraphᚋmodelᚐClearNotificationIn(ctx context.Context, v interface{}) (*model.ClearNotificationIn, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputClearNotificationIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {

@@ -16,12 +16,6 @@ func (r *mutationResolver) RegisterToken(ctx context.Context, input *model.Regis
 	return err == nil, err
 }
 
-// ClearNotification is the resolver for the clearNotification field.
-func (r *mutationResolver) ClearNotification(ctx context.Context) (bool, error) {
-	err := r.SimpleNotificationRepo.MarkAllRead(ctx, 1)
-	return err != nil, err
-}
-
 // CreateNotification is the resolver for the createNotification field.
 func (r *mutationResolver) CreateNotification(ctx context.Context, input model.NewNotification) (*model.Notification, error) {
 	token, err := r.FirebaseRepo.GetToken(ctx, input.UserID)
@@ -35,6 +29,16 @@ func (r *mutationResolver) CreateNotification(ctx context.Context, input model.N
 	}
 	err = r.NotificationSender.SendNotification(ctx, token, data)
 	return data, err
+}
+
+// ClearNotification is the resolver for the clearNotification field.
+func (r *mutationResolver) ClearNotification(ctx context.Context, input *model.ClearNotificationIn) (bool, error) {
+	userId := 1
+	if input != nil && input.UserID != nil {
+		userId = *input.UserID
+	}
+	err := r.SimpleNotificationRepo.MarkAllRead(ctx, userId)
+	return err != nil, err
 }
 
 // CreateSimpleNotification is the resolver for the createSimpleNotification field.
@@ -87,6 +91,9 @@ func (r *queryResolver) SimpleNotifications(ctx context.Context, input *model.No
 		langCode = *input.LangCode
 	}
 	userId := 1
+	if input != nil && input.UserID != nil {
+		userId = *input.UserID
+	}
 	notifications, nextOffset, err := r.SimpleNotificationRepo.Notifications(ctx, off, cnt, langCode, userId)
 	if err != nil {
 		return nil, err

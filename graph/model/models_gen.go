@@ -2,6 +2,10 @@
 
 package model
 
+type ClearNotificationIn struct {
+	UserID *int `json:"userId"`
+}
+
 type MarkRead struct {
 	ID int `json:"id"`
 }
@@ -35,6 +39,7 @@ type NotificationList struct {
 	Count    *int    `json:"count"`
 	Offset   *int    `json:"offset"`
 	LangCode *string `json:"langCode"`
+	UserID   *int    `json:"userId"`
 }
 
 type Notifications struct {

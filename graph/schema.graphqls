@@ -63,6 +63,16 @@ input NotificationList{
     count: Int
     offset: Int
     langCode: String
+    userId: Int
+}
+
+input ClearNotificationIn{
+    userId: Int
+}
+
+input OrderListingQuery{
+    userId: Int
+
 }
 
 type Query {
@@ -74,7 +84,7 @@ type Query {
 type Mutation {
     registerToken(input: RegisterToken ) : Boolean!
     createNotification(input: NewNotification!): Notification!
-    clearNotification:Boolean!
+    clearNotification(input: ClearNotificationIn):Boolean!
     createSimpleNotification(input: NewSimpleNotification) : SimpleNotification!
     markRead(input: MarkRead): SimpleNotification!
 }

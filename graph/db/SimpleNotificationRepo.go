@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/ezrx/notification-service/graph/model"
-	"sync/atomic"
+	"sync"
 	"time"
 )
 
@@ -16,7 +16,8 @@ type SimpleNotificationRepo interface {
 }
 
 type simpleNotificationRepo struct {
-	counter       atomic.Int32
+	sync.Mutex
+	counter       int
 	notifications []*model.SimpleNotification
 }
 
@@ -62,9 +63,11 @@ func (n *simpleNotificationRepo) Notifications(ctx context.Context, offset int, 
 }
 
 func (n *simpleNotificationRepo) CreateNotification(ctx context.Context, input *model.NewSimpleNotification) (*model.SimpleNotification, error) {
-	id := n.counter.Add(1)
+	n.Lock()
+	defer n.Unlock()
+	n.counter += 1
 	notification := &model.SimpleNotification{
-		ID:               int(id),
+		ID:               n.counter,
 		UserID:           input.UserID,
 		OrderID:          input.OrderID,
 		OrderType:        input.OrderType,
