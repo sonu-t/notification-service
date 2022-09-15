@@ -135,6 +135,11 @@ func (r *queryResolver) Orders(ctx context.Context, input *model.OrderListingQue
 	}, err
 }
 
+// OrderDetail is the resolver for the orderDetail field.
+func (r *queryResolver) OrderDetail(ctx context.Context, orderID int) (*model.OrderDetail, error) {
+	return r.OrderRepo.OrderDetail(ctx, orderID)
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 

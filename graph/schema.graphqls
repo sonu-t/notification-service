@@ -115,6 +115,7 @@ type Query {
     notifications(count: Int = 10, offset: Int=0): Notifications!
     simpleNotifications(input: NotificationList): SimpleNotifications!
     orders(input: OrderListingQuery): OrderListResponse
+    orderDetail(orderId: Int!): OrderDetail
 }
 
 

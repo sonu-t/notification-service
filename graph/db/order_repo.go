@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"errors"
 	"github.com/ezrx/notification-service/graph/model"
 	"sync"
 	"time"
@@ -10,12 +11,22 @@ import (
 type OrderRepo interface {
 	Orders(ctx context.Context, offset, count, userId int) ([]*model.OrderDetail, int, error)
 	NewOrder(ctx context.Context, input *model.NewOrder) (*model.OrderDetail, error)
+	OrderDetail(ctx context.Context, orderId int) (*model.OrderDetail, error)
 }
 
 type orderRepo struct {
 	sync.Mutex
 	orderId int
 	orders  []*model.OrderDetail
+}
+
+func (o *orderRepo) OrderDetail(ctx context.Context, orderId int) (*model.OrderDetail, error) {
+	for _, order := range o.orders {
+		if order.OrderID == orderId {
+			return order, nil
+		}
+	}
+	return nil, errors.New("order id not found")
 }
 
 func (o *orderRepo) Orders(ctx context.Context, offset, count, userId int) ([]*model.OrderDetail, int, error) {

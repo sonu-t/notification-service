@@ -89,6 +89,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Notifications       func(childComplexity int, count *int, offset *int) int
+		OrderDetail         func(childComplexity int, orderID int) int
 		Orders              func(childComplexity int, input *model.OrderListingQuery) int
 		SimpleNotifications func(childComplexity int, input *model.NotificationList) int
 	}
@@ -106,8 +107,9 @@ type ComplexityRoot struct {
 	}
 
 	SimpleNotifications struct {
-		NextOffset    func(childComplexity int) int
-		Notifications func(childComplexity int) int
+		NextOffset                  func(childComplexity int) int
+		Notifications               func(childComplexity int) int
+		NumberOfUnreadNotifications func(childComplexity int) int
 	}
 }
 
@@ -123,6 +125,7 @@ type QueryResolver interface {
 	Notifications(ctx context.Context, count *int, offset *int) (*model.Notifications, error)
 	SimpleNotifications(ctx context.Context, input *model.NotificationList) (*model.SimpleNotifications, error)
 	Orders(ctx context.Context, input *model.OrderListingQuery) (*model.OrderListResponse, error)
+	OrderDetail(ctx context.Context, orderID int) (*model.OrderDetail, error)
 }
 
 type executableSchema struct {
@@ -357,6 +360,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Notifications(childComplexity, args["count"].(*int), args["offset"].(*int)), true
 
+	case "Query.orderDetail":
+		if e.complexity.Query.OrderDetail == nil {
+			break
+		}
+
+		args, err := ec.field_Query_orderDetail_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.OrderDetail(childComplexity, args["orderId"].(int)), true
+
 	case "Query.orders":
 		if e.complexity.Query.Orders == nil {
 			break
@@ -457,6 +472,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SimpleNotifications.Notifications(childComplexity), true
+
+	case "SimpleNotifications.numberOfUnreadNotifications":
+		if e.complexity.SimpleNotifications.NumberOfUnreadNotifications == nil {
+			break
+		}
+
+		return e.complexity.SimpleNotifications.NumberOfUnreadNotifications(childComplexity), true
 
 	}
 	return 0, false
@@ -589,6 +611,7 @@ type Notifications {
 type SimpleNotifications{
     notifications: [SimpleNotification!]
     nextOffset: Int!
+    numberOfUnreadNotifications: Int
 }
 
 input RegisterToken {
@@ -651,6 +674,7 @@ type Query {
     notifications(count: Int = 10, offset: Int=0): Notifications!
     simpleNotifications(input: NotificationList): SimpleNotifications!
     orders(input: OrderListingQuery): OrderListResponse
+    orderDetail(orderId: Int!): OrderDetail
 }
 
 
@@ -797,6 +821,21 @@ func (ec *executionContext) field_Query_notifications_args(ctx context.Context, 
 		}
 	}
 	args["offset"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_orderDetail_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["orderId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderId"] = arg0
 	return args, nil
 }
 
@@ -2233,6 +2272,8 @@ func (ec *executionContext) fieldContext_Query_simpleNotifications(ctx context.C
 				return ec.fieldContext_SimpleNotifications_notifications(ctx, field)
 			case "nextOffset":
 				return ec.fieldContext_SimpleNotifications_nextOffset(ctx, field)
+			case "numberOfUnreadNotifications":
+				return ec.fieldContext_SimpleNotifications_numberOfUnreadNotifications(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type SimpleNotifications", field.Name)
 		},
@@ -2303,6 +2344,72 @@ func (ec *executionContext) fieldContext_Query_orders(ctx context.Context, field
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_orders_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_orderDetail(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_orderDetail(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().OrderDetail(rctx, fc.Args["orderId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.OrderDetail)
+	fc.Result = res
+	return ec.marshalOOrderDetail2ᚖgithubᚗcomᚋezrxᚋnotificationᚑserviceᚋgraphᚋmodelᚐOrderDetail(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_orderDetail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "status":
+				return ec.fieldContext_OrderDetail_status(ctx, field)
+			case "orderId":
+				return ec.fieldContext_OrderDetail_orderId(ctx, field)
+			case "userId":
+				return ec.fieldContext_OrderDetail_userId(ctx, field)
+			case "orderDate":
+				return ec.fieldContext_OrderDetail_orderDate(ctx, field)
+			case "totalCost":
+				return ec.fieldContext_OrderDetail_totalCost(ctx, field)
+			case "products":
+				return ec.fieldContext_OrderDetail_products(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrderDetail", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_orderDetail_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -2927,6 +3034,47 @@ func (ec *executionContext) _SimpleNotifications_nextOffset(ctx context.Context,
 }
 
 func (ec *executionContext) fieldContext_SimpleNotifications_nextOffset(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SimpleNotifications",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SimpleNotifications_numberOfUnreadNotifications(ctx context.Context, field graphql.CollectedField, obj *model.SimpleNotifications) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SimpleNotifications_numberOfUnreadNotifications(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NumberOfUnreadNotifications, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SimpleNotifications_numberOfUnreadNotifications(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "SimpleNotifications",
 		Field:      field,
@@ -5522,6 +5670,26 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
+		case "orderDetail":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_orderDetail(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
 		case "__type":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -5650,6 +5818,10 @@ func (ec *executionContext) _SimpleNotifications(ctx context.Context, sel ast.Se
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "numberOfUnreadNotifications":
+
+			out.Values[i] = ec._SimpleNotifications_numberOfUnreadNotifications(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
