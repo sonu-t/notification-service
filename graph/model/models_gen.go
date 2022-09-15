@@ -104,6 +104,7 @@ type SimpleNotification struct {
 }
 
 type SimpleNotifications struct {
-	Notifications []*SimpleNotification `json:"notifications"`
-	NextOffset    int                   `json:"nextOffset"`
+	Notifications               []*SimpleNotification `json:"notifications"`
+	NextOffset                  int                   `json:"nextOffset"`
+	NumberOfUnreadNotifications *int                  `json:"numberOfUnreadNotifications"`
 }

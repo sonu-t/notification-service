@@ -11,7 +11,7 @@ import (
 type SimpleNotificationRepo interface {
 	CreateNotification(ctx context.Context, input *model.NewSimpleNotification) (*model.SimpleNotification, error)
 	MarkRead(ctx context.Context, read *model.MarkRead) (*model.SimpleNotification, error)
-	Notifications(ctx context.Context, offset int, count int, langCode string, userId int) ([]*model.SimpleNotification, int, error)
+	Notifications(ctx context.Context, offset int, count int, langCode string, userId int) ([]*model.SimpleNotification, int, int, error)
 	MarkAllRead(ctx context.Context, userId int) error
 }
 
@@ -40,12 +40,16 @@ func (n *simpleNotificationRepo) MarkRead(ctx context.Context, read *model.MarkR
 	return nil, errors.New("notification id not found")
 }
 
-func (n *simpleNotificationRepo) Notifications(ctx context.Context, offset int, count int, langCode string, userId int) ([]*model.SimpleNotification, int, error) {
+func (n *simpleNotificationRepo) Notifications(ctx context.Context, offset int, count int, langCode string, userId int) (notifications []*model.SimpleNotification, nextOffset int, unReadCount int, err error) {
 	total := len(n.notifications)
 	if total == 0 || offset < 0 || offset >= total {
-		return nil, -1, nil
+		return nil, -1, 0, nil
 	}
-	var notifications []*model.SimpleNotification
+	for _, notification := range n.notifications {
+		if !notification.Status {
+			unReadCount += 1
+		}
+	}
 	for offset < total {
 		notification := n.notifications[offset]
 		if notification.UserID == userId && notification.LangCode == langCode {
@@ -56,7 +60,7 @@ func (n *simpleNotificationRepo) Notifications(ctx context.Context, offset int, 
 			break
 		}
 	}
-	return notifications, offset, nil
+	return
 }
 
 func (n *simpleNotificationRepo) CreateNotification(ctx context.Context, input *model.NewSimpleNotification) (*model.SimpleNotification, error) {

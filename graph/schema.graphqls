@@ -52,6 +52,7 @@ type Notifications {
 type SimpleNotifications{
     notifications: [SimpleNotification!]
     nextOffset: Int!
+    numberOfUnreadNotifications: Int
 }
 
 input RegisterToken {

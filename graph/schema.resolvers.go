@@ -99,13 +99,14 @@ func (r *queryResolver) SimpleNotifications(ctx context.Context, input *model.No
 	if input != nil && input.UserID != nil {
 		userId = *input.UserID
 	}
-	notifications, nextOffset, err := r.SimpleNotificationRepo.Notifications(ctx, off, cnt, langCode, userId)
+	notifications, nextOffset, unreadCnt, err := r.SimpleNotificationRepo.Notifications(ctx, off, cnt, langCode, userId)
 	if err != nil {
 		return nil, err
 	}
 	return &model.SimpleNotifications{
-		Notifications: notifications,
-		NextOffset:    nextOffset,
+		Notifications:               notifications,
+		NextOffset:                  nextOffset,
+		NumberOfUnreadNotifications: &unreadCnt,
 	}, err
 }
 
