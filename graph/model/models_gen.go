@@ -17,6 +17,13 @@ type NewNotification struct {
 	UserID int    `json:"userId"`
 }
 
+type NewOrder struct {
+	UserID    int                `json:"userId"`
+	TotalCost float64            `json:"totalCost"`
+	Status    string             `json:"status"`
+	Products  []*ProductDetailIn `json:"products"`
+}
+
 type NewSimpleNotification struct {
 	LangCode         string `json:"langCode"`
 	UserID           int    `json:"userId"`
@@ -45,6 +52,38 @@ type NotificationList struct {
 type Notifications struct {
 	Notifications []*Notification `json:"notifications"`
 	NextOffset    int             `json:"nextOffset"`
+}
+
+type OrderDetail struct {
+	Status    string           `json:"status"`
+	OrderID   int              `json:"orderId"`
+	UserID    int              `json:"userId"`
+	OrderDate string           `json:"orderDate"`
+	TotalCost float64          `json:"totalCost"`
+	Products  []*ProductDetail `json:"products"`
+}
+
+type OrderListResponse struct {
+	Orders     []*OrderDetail `json:"orders"`
+	NextOffset int            `json:"nextOffset"`
+}
+
+type OrderListingQuery struct {
+	UserID *int `json:"userId"`
+	Count  *int `json:"count"`
+	Offset *int `json:"offset"`
+}
+
+type ProductDetail struct {
+	Name         string  `json:"name"`
+	Count        int     `json:"count"`
+	PricePerUnit float64 `json:"pricePerUnit"`
+}
+
+type ProductDetailIn struct {
+	Name         string  `json:"name"`
+	Count        int     `json:"count"`
+	PricePerUnit float64 `json:"pricePerUnit"`
 }
 
 type RegisterToken struct {

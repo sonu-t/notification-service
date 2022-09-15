@@ -27,6 +27,7 @@ func main() {
 		FirebaseRepo:           db.NewFirebaseRepo(),
 		NotificationSender:     firebase.NewNotificationSender(),
 		SimpleNotificationRepo: db.NewSimpleNotificationRepo(),
+		OrderRepo:              db.NewOrderRepo(),
 	}
 	router := chi.NewRouter()
 	// Add CORS middleware around every request

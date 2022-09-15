@@ -14,4 +14,5 @@ type Resolver struct {
 	FirebaseRepo           db.FirebaseRepo
 	SimpleNotificationRepo db.SimpleNotificationRepo
 	NotificationSender     firebase.NotificationSender
+	OrderRepo              db.OrderRepo
 }

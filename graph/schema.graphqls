@@ -72,12 +72,48 @@ input ClearNotificationIn{
 
 input OrderListingQuery{
     userId: Int
+    count: Int
+    offset: Int
+}
 
+type OrderDetail{
+    status: String!
+    orderId: Int!
+    userId: Int!
+    orderDate: String!
+    totalCost: Float!
+    products: [ProductDetail]
+}
+
+type ProductDetail {
+    name: String!
+    count: Int!
+    pricePerUnit: Float!
+}
+
+type OrderListResponse {
+    orders: [OrderDetail]!
+    nextOffset: Int!
+}
+
+input ProductDetailIn{
+    name: String!
+    count: Int!
+
+    pricePerUnit: Float!
+}
+
+input NewOrder {
+    userId: Int!
+    totalCost: Float!
+    status: String!
+    products: [ProductDetailIn]!
 }
 
 type Query {
     notifications(count: Int = 10, offset: Int=0): Notifications!
     simpleNotifications(input: NotificationList): SimpleNotifications!
+    orders(input: OrderListingQuery): OrderListResponse
 }
 
 
@@ -87,5 +123,6 @@ type Mutation {
     clearNotification(input: ClearNotificationIn):Boolean!
     createSimpleNotification(input: NewSimpleNotification) : SimpleNotification!
     markRead(input: MarkRead): SimpleNotification!
+    newOrder(input: NewOrder): OrderDetail
 }
 

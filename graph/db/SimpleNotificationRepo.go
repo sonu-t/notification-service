@@ -45,16 +45,13 @@ func (n *simpleNotificationRepo) Notifications(ctx context.Context, offset int, 
 	if total == 0 || offset < 0 || offset >= total {
 		return nil, -1, nil
 	}
-	if offset == 0 {
-		offset = len(n.notifications) - 1
-	}
 	var notifications []*model.SimpleNotification
-	for offset >= 0 {
+	for offset < total {
 		notification := n.notifications[offset]
 		if notification.UserID == userId && notification.LangCode == langCode {
 			notifications = append(notifications, notification)
 		}
-		offset -= 1
+		offset += 1
 		if len(notifications) == count {
 			break
 		}
@@ -76,7 +73,8 @@ func (n *simpleNotificationRepo) CreateNotification(ctx context.Context, input *
 		CreatedTime:      time.Now().Format(time.RFC3339),
 		LangCode:         input.LangCode,
 	}
-	n.notifications = append(n.notifications, notification)
+	notifications := []*model.SimpleNotification{notification}
+	n.notifications = append(notifications, n.notifications...)
 	return notification, nil
 }
 
