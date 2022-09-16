@@ -76,6 +76,7 @@ type OrderListingQuery struct {
 
 type ProductDetail struct {
 	Name         string  `json:"name"`
+	ThumbnailURL string  `json:"thumbnailUrl"`
 	Count        int     `json:"count"`
 	PricePerUnit float64 `json:"pricePerUnit"`
 }
@@ -83,6 +84,7 @@ type ProductDetail struct {
 type ProductDetailIn struct {
 	Name         string  `json:"name"`
 	Count        int     `json:"count"`
+	ThumbnailURL string  `json:"thumbnailUrl"`
 	PricePerUnit float64 `json:"pricePerUnit"`
 }
 

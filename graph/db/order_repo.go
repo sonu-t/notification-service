@@ -69,6 +69,7 @@ func (o *orderRepo) NewOrder(ctx context.Context, input *model.NewOrder) (*model
 			Name:         product.Name,
 			Count:        product.Count,
 			PricePerUnit: product.PricePerUnit,
+			ThumbnailURL: product.ThumbnailURL,
 		})
 	}
 	orders := []*model.OrderDetail{order}

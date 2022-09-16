@@ -88,6 +88,7 @@ type OrderDetail{
 
 type ProductDetail {
     name: String!
+    thumbnailUrl: String!
     count: Int!
     pricePerUnit: Float!
 }
@@ -100,7 +101,7 @@ type OrderListResponse {
 input ProductDetailIn{
     name: String!
     count: Int!
-
+    thumbnailUrl: String!
     pricePerUnit: Float!
 }
 
