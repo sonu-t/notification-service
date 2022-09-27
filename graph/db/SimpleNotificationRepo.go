@@ -60,7 +60,7 @@ func (n *simpleNotificationRepo) Notifications(ctx context.Context, offset int, 
 			break
 		}
 	}
-	return
+	return notifications, offset, unReadCount, nil
 }
 
 func (n *simpleNotificationRepo) CreateNotification(ctx context.Context, input *model.NewSimpleNotification) (*model.SimpleNotification, error) {
