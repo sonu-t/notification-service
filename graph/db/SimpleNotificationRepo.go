@@ -60,7 +60,11 @@ func (n *simpleNotificationRepo) Notifications(ctx context.Context, offset int, 
 			break
 		}
 	}
-	return notifications, offset, unReadCount, nil
+	nextOffset = offset
+	if offset == len(n.notifications){
+		nextOffset = -1
+	}
+	return 
 }
 
 func (n *simpleNotificationRepo) CreateNotification(ctx context.Context, input *model.NewSimpleNotification) (*model.SimpleNotification, error) {
