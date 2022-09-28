@@ -46,7 +46,7 @@ func (n *simpleNotificationRepo) Notifications(ctx context.Context, offset int, 
 		return nil, -1, 0, nil
 	}
 	for _, notification := range n.notifications {
-		if !notification.Status  && notification.UserId == userId {
+		if !notification.Status && notification.UserID == userId {
 			unReadCount += 1
 		}
 	}
@@ -61,10 +61,10 @@ func (n *simpleNotificationRepo) Notifications(ctx context.Context, offset int, 
 		}
 	}
 	nextOffset = offset
-	if offset == len(n.notifications){
+	if offset == len(n.notifications) {
 		nextOffset = -1
 	}
-	return 
+	return
 }
 
 func (n *simpleNotificationRepo) CreateNotification(ctx context.Context, input *model.NewSimpleNotification) (*model.SimpleNotification, error) {
