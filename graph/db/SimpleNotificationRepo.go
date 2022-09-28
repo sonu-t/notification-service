@@ -46,7 +46,7 @@ func (n *simpleNotificationRepo) Notifications(ctx context.Context, offset int, 
 		return nil, -1, 0, nil
 	}
 	for _, notification := range n.notifications {
-		if !notification.Status {
+		if !notification.Status  && notification.UserId == userId {
 			unReadCount += 1
 		}
 	}
